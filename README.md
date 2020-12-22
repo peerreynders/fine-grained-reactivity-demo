@@ -8,14 +8,14 @@ TypeScript demo of fine-grained reactive programming.
 * The Result: This repository.
 
 ```ShellSession
-$ npm run test
+$ cd fine-grained-reactivity-demo
+$ npm i
+added 417 packages from 236 contributors and audited 417 packages in 5.305s
+found 0 vulnerabilities
 
-> fine-grained-reactivity-demo@1.0.0 test
+$ npm test
 > npm run lint:types && ava --config ava.config.js
-
-> fine-grained-reactivity-demo@1.0.0 lint:types
 > tsc --noEmit -p .
-
   ✔ A signal has a value
   ✔ A signal's value can be set
   ✔ A memo calculates an initial value
@@ -32,7 +32,6 @@ $ npm run test
   ✔ Effects should only be called once, even when multiple dependencies change
   ✔ Effect on a stable source doesn't fire - even when that source's sources vary
   ─
-
   15 tests passed
 $ 
 ```
