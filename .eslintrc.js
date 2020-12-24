@@ -16,7 +16,7 @@ module.exports = {
     ecmaVersion: 2021,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'eslint-plugin-tsdoc'],
   rules: {
     indent: ['error', 2, { SwitchCase: 1 }],
     'linebreak-style': ['error', 'unix'],
@@ -28,5 +28,6 @@ module.exports = {
       2,
       { args: 'all', varsIgnorePattern: '^_' },
     ],
+    'tsdoc/syntax': 'warn',
   },
 };
