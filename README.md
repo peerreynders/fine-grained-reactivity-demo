@@ -10,7 +10,7 @@ TypeScript demo of fine-grained reactive programming.
 ```ShellSession
 $ cd fine-grained-reactivity-demo
 $ npm i
-added 417 packages from 236 contributors and audited 417 packages in 5.305s
+added 421 packages from 237 contributors and audited 421 packages in 5.133s
 found 0 vulnerabilities
 
 $ npm test
