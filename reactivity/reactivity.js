@@ -296,7 +296,7 @@ function writeSubject(subject, value) {
 
 /**
    @template T
-   @type { import('./reactivity').createSignal<T> }
+   @type { import('reactivity').createSignal<T> }
 */
 function createSignal(value, equal, options) {
   /** @type  Subject<T> */
@@ -312,7 +312,7 @@ function createSignal(value, equal, options) {
 
 /**
    @template T
-   @type { import('./reactivity').createMemo<T> }
+   @type { import('reactivity').createMemo<T> }
 */
 function createMemo(updateFn, value, equal, options) {
   /** @type Memo<T> */
@@ -332,7 +332,7 @@ function createMemo(updateFn, value, equal, options) {
 
 /**
    @template T
-   @type { import('./reactivity').createEffect<T> }
+   @type { import('reactivity').createEffect<T> }
 */
 function createEffect(updateFn, value) {
   /** @type Observer<T> */
