@@ -1,6 +1,6 @@
 # Fine-Grained Reactivity Demo
 
-TypeScript demo of fine-grained reactive programming.
+A typed ECMAScript[^1] demo of fine-grained reactive programming.
 * The Inspiration: [Finding Fine-Grained Reactive Programming](https://indepth.dev/posts/1269/finding-fine-grained-reactive-programming#how-it-works) (or on [gitconnected.com](https://levelup.gitconnected.com/finding-fine-grained-reactive-programming-89741994ddee?source=friends_link&sk=31c66a70c1dce7dd5f3f4229423ad127#4543)) - How It Works (... but what does that look like in detail?)
 * The Opportunity: A pre-existing exercise-centric test specification - [Implement a basic reactive system](https://github.com/exercism/problem-specifications/blob/master/exercises/react/canonical-data.json) (... I wish this was phrased in terms of fine-grained reactive programming).
 * The Motivation: The [exercise](https://exercism.io/tracks/javascript/exercises/react) hasn't been implemented for the TypeScript track (... hmmm ...).
@@ -35,3 +35,4 @@ $ npm test
   15 tests passed
 $ 
 ```
+[^1]: Originally authored in TypeScript. After this [tweet](https://twitter.com/Rich_Harris/status/1350436286948122625) this repository was converted to typed ECMAScript.

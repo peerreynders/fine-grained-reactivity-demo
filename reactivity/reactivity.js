@@ -6,90 +6,79 @@
 // https://indepth.dev/posts/1269/finding-fine-grained-reactive-programming#how-it-works
 // https://levelup.gitconnected.com/finding-fine-grained-reactive-programming-89741994ddee?source=friends_link&sk=31c66a70c1dce7dd5f3f4229423ad127#4543
 //
+/**
+   @template T
+   @typedef { import('./internal').EqualFn<T>} EqualFn<T>
+*/
+/** @typedef { import('./internal').UnsubscribeFn } UnsubscribeFn */
 
-enum Status {
-  OK,
-  Pending,
-  Stale,
+/** @typedef { import('./internal').SubjectR } SubjectR */
+/** @typedef { import('./internal').ObserverR } ObserverR */
+/** @typedef { import('./internal').MemoR } MemoR */
+/**
+   @template T
+   @typedef { import('./internal').Observer<T> } Observer<T>
+*/
+/**
+   @template T
+   @typedef { import('./internal').Subject<T> } Subject<T>
+*/
+/**
+   @template T
+   @typedef { import('./internal').Memo<T> } Memo<T>
+*/
+
+/** @type { import('./internal').StatusEnum } */
+const Status = Object.freeze({
+  OK: 0,
+  Pending: 1,
+  Stale: 2,
+});
+
+/**
+   @param { ObserverR  } observer
+   @return { observer is MemoR }
+*/
+function isObserverRMemoR(observer) {
+  // prettier-ignore
+  const memo = /** @type MemoR */ (observer);
+  return memo.observers !== undefined;
 }
 
 /**
- * Type for the closure's value equality predicate.
- *
- * @typeParam T - Type of the values being compared for
- *              equality.
- *
- * @remarks
- * Conceptually this function should be equivalent
- * to: `lhs === rhs`
- *
- * @param lhs   - left hand side value
- * @param rhs   - right hand side value
- * @returns     - `true` if values are considered
- *                equal; `false` otherwise.
- */
-type EqualFn<T> = (lhs: T, rhs: T) => boolean;
-type GetterFn<T> = () => T;
-type SetterFn<T> = (value: T) => T;
-type UnsubscribeFn = () => void;
-type UpdateFn<T> = (value?: T) => T;
-
-type SignalPair<T> = [GetterFn<T>, SetterFn<T>];
-
-type Options = {
-  name: string;
-};
-
-type ObserverR = {
-  name?: string;
-  pure: boolean;
-  status: Status;
-  subjects: Set<SubjectR>;
-};
-
-type ObserverV<T> = {
-  value?: T;
-  updateFn: UpdateFn<T>;
-};
-
-type Observer<T> = ObserverR & ObserverV<T>;
-
-type SubjectR = {
-  name?: string;
-  observers: Set<ObserverR>;
-};
-
-type SubjectV<T> = {
-  value?: T;
-  equalFn?: EqualFn<T>;
-};
-
-type Subject<T> = SubjectR & SubjectV<T>;
-
-type MemoR = ObserverR & SubjectR;
-
-type Memo<T> = MemoR & ObserverV<T> & SubjectV<T>;
-
-function isObserverRMemoR(observer: ObserverR): observer is MemoR {
-  const memo = observer as MemoR;
-  return memo.observers !== undefined;
-}
-
-function isSubjectMemo<T>(subject: Subject<T>): subject is Memo<T> {
-  const memo = subject as Memo<T>;
+   @template T
+   @param { Subject<T> } subject
+   @return { subject is Memo<T> }
+*/
+function isSubjectMemo(subject) {
+  // prettier-ignore
+  const memo = /** @type Memo<T> */ (/** @type unknown */ (subject));
   return memo.subjects !== undefined;
 }
 
-function isObserverMemo<T>(observer: Observer<T>): observer is Memo<T> {
-  const memo = observer as Memo<T>;
+/**
+   @template T
+   @param { Observer<T> } observer
+   @return { observer is Memo<T> }
+*/
+function isObserverMemo(observer) {
+  // prettier-ignore
+  const memo = /** @type Memo<T> */ (/** @type unknown */ (observer));
   return memo.observers !== undefined;
 }
 
-const defaultEqual = <T>(lhs: T, rhs: T): boolean => lhs === rhs;
+/**
+   @template T
+   @type { <T>(lhs: T, rhs: T) => boolean }
+*/
+const defaultEqual = (lhs, rhs) => lhs === rhs;
 
-function selectEqualFn<T>(
-  equal: boolean | EqualFn<T> | undefined
-): EqualFn<T> | undefined {
+/**
+   @template T
+   @param { boolean | EqualFn<T> | undefined } equal
+   @return { EqualFn<T> | undefined }
+*/
+function selectEqualFn(equal) {
   if (typeof equal === 'function') return equal;
 
   if (equal === true) return defaultEqual;
@@ -98,21 +87,37 @@ function selectEqualFn<T>(
 }
 
 // module context values
-let activeObserver: ObserverR;
-let updateQueue: ObserverR[] | undefined;
-let effectsQueue: ObserverR[] | undefined;
+/** @type ObserverR */
+let activeObserver;
+/** @type { ObserverR[] | undefined } */
+let updateQueue;
+/** @type { ObserverR[] | undefined } */
+let effectsQueue;
 
-function link(subject: SubjectR, observer: ObserverR): void {
+/**
+   @param { SubjectR } subject
+   @param { ObserverR } observer
+   @return void
+*/
+function link(subject, observer) {
   observer.subjects.add(subject);
   subject.observers.add(observer);
 }
 
-function unsubscribe(observer: ObserverR): void {
+/**
+   @param { ObserverR } observer
+   @return void
+*/
+function unsubscribe(observer) {
   observer.subjects.forEach((subject) => subject.observers.delete(observer));
 }
 
-function makeUnsubscribe(observer: ObserverR | undefined): UnsubscribeFn {
-  return (): void => {
+/**
+   @param { ObserverR | undefined } observer
+   @return { UnsubscribeFn }
+*/
+function makeUnsubscribe(observer) {
+  return () => {
     if (!observer) return;
     const o = observer;
     observer = undefined;
@@ -121,31 +126,49 @@ function makeUnsubscribe(observer: ObserverR | undefined): UnsubscribeFn {
   };
 }
 
-function prepareForUpdate(observer: ObserverR): void {
+/**
+   @param { ObserverR } observer
+   @return void
+*/
+function prepareForUpdate(observer) {
   if (isObserverRMemoR(observer) && observer.status !== Status.Pending) {
     markDeepObservers(observer);
   }
   observer.status = Status.Stale;
 
-  if (observer.pure) updateQueue!.push(observer);
-  else effectsQueue!.push(observer);
+  // prettier-ignore
+  if (observer.pure) (/** @type { ObserverR[] }  */(updateQueue)).push(observer);
+  else (/** @type { ObserverR[] } */(effectsQueue)).push(observer);
 }
 
-function markDeep(observer: ObserverR): void {
+/**
+   @param { ObserverR } observer
+   @return void
+*/
+function markDeep(observer) {
   if (observer.status === Status.OK) {
     observer.status = Status.Pending;
     if (isObserverRMemoR(observer)) markDeepObservers(observer);
   }
 }
 
-function markDeepObservers(subject: SubjectR): void {
+/**
+   @param { SubjectR } subject
+   @return void
+*/
+function markDeepObservers(subject) {
   subject.observers.forEach(markDeep);
 }
 
-function runUpdates(prepareUpdates: () => void): void {
+/**
+   @param { () => void } prepareUpdates
+   @return void
+*/
+function runUpdates(prepareUpdates) {
   if (updateQueue) return prepareUpdates();
 
-  const updates: ObserverR[] = [];
+  /** @type ObserverR[] */
+  const updates = [];
   updateQueue = updates;
 
   const [effects, delayEffects] = effectsQueue
@@ -163,13 +186,23 @@ function runUpdates(prepareUpdates: () => void): void {
   effectsQueue = undefined;
 }
 
-function updateQueued(queued: ObserverR[]): void {
-  for (let i = 0; i < queued.length; i++) {
-    updateViaStatus(queued[i] as Observer<unknown>, true);
-  }
+/**
+   @param { ObserverR[] } queued
+   @return void
+*/
+function updateQueued(queued) {
+  for (let i = 0; i < queued.length; i++)
+    // prettier-ignore
+    updateViaStatus(/** @type Observer<unknown> */(queued[i]), true);
 }
 
-function updateViaStatus<T>(observer: Observer<T>, saveQueue = false): void {
+/**
+   @template T
+   @param { Observer<T> } observer
+   @param { boolean } saveQueue
+   @return void
+*/
+function updateViaStatus(observer, saveQueue = false) {
   switch (observer.status) {
     case Status.Pending: {
       if (saveQueue !== true) {
@@ -188,15 +221,30 @@ function updateViaStatus<T>(observer: Observer<T>, saveQueue = false): void {
   }
 }
 
-function updateDeep<T>(subject: Subject<T>): void {
+/**
+   @template T
+   @param { Subject<T> } subject
+   @return void
+*/
+function updateDeep(subject) {
   if (isSubjectMemo(subject)) updateViaStatus(subject);
 }
 
-function updateDeepStaleSubjects<T>(observer: Observer<T>): void {
+/**
+   @template T
+   @param { Observer<T> } observer
+   @return void
+*/
+function updateDeepStaleSubjects(observer) {
   observer.subjects.forEach(updateDeep);
 }
 
-function updateObserver<T>(observer: Observer<T>): void {
+/**
+   @template T
+   @param { Observer<T> } observer
+   @return void
+*/
+function updateObserver(observer) {
   unsubscribe(observer);
   const prevObserver = activeObserver;
   activeObserver = observer;
@@ -209,7 +257,12 @@ function updateObserver<T>(observer: Observer<T>): void {
   activeObserver = prevObserver;
 }
 
-function readSubject<T>(subject: Subject<T>): T {
+/**
+   @template T
+   @param {  Subject<T> } subject
+   @return void
+*/
+function readSubject(subject) {
   if (isSubjectMemo(subject) && subject.status !== Status.OK) {
     const updates = updateQueue;
     updateQueue = undefined;
@@ -218,10 +271,17 @@ function readSubject<T>(subject: Subject<T>): T {
   }
   if (activeObserver) link(subject, activeObserver);
 
-  return subject.value!;
+  // prettier-ignore
+  return /** @type { !T } */(subject.value);
 }
 
-function writeSubject<T>(subject: Subject<T>, value: T): T {
+/**
+   @template T
+   @param { Subject<T> } subject
+   @param { T } value
+   @return T
+*/
+function writeSubject(subject, value) {
   if (subject.equalFn && subject.value && subject.equalFn(subject.value, value))
     return value;
 
@@ -235,153 +295,53 @@ function writeSubject<T>(subject: Subject<T>, value: T): T {
 }
 
 /**
- * Creates a signal closure. The value is accessed
- * via the accessor and changed via the
- * mutator returned as part an `SignalPair<T>`.
- *
- * @typeParam T   - Type of the closure's value.
- *                By extension the type of the return
- *                value of the accessor and the type
- *                of the mutator's single argument.
- *
- * @param value   - Signal closure's initial value.
- * @param equal   - By default the current and previous
- *                values are not compared so invoking
- *                the mutator with identical values
- *                will trigger updates on any
- *                subscribers. When `true` is
- *                specified the
- *                {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Strict_equality | strict equality operator}
- *                is used to compare values and
- *                mutations with unchanging values
- *                **are** suppressed.
- *                When `T` is a structural type
- *                it is necessary to provide a
- *                `(a: T, b: T) => boolean` comparison
- *                predicate instead.
- * @param options - Holder object for relevant options.
- *                Assigning a `name` to a subject can
- *                be useful during debugging.
- * @returns       - A `SignalPair<T>`. The 1st
- *                element is the accessor (getter
- *                function), the 2nd element is
- *                the mutator (setter function).
- */
-function createSignal<T>(
-  value: T,
-  equal?: boolean | EqualFn<T>,
-  options?: Options
-): SignalPair<T> {
-  const subject: Subject<T> = {
+   @template T
+   @type { import('./reactivity').createSignal<T> }
+*/
+function createSignal(value, equal, options) {
+  /** @type  Subject<T> */
+  const subject = {
     name: options?.name,
-    observers: new Set<ObserverR>(),
+    observers: new Set(),
     value,
     equalFn: selectEqualFn(equal),
   };
 
-  return [
-    (): T => readSubject(subject),
-    (value: T): T => writeSubject(subject, value),
-  ];
+  return [() => readSubject(subject), (value) => writeSubject(subject, value)];
 }
 
 /**
- * Creates a memo (derived) closure with the
- * supplied function which computes the current value
- * of the closure.
- *
- * @typeParam T   - Type of the closure's value.
- *                By extension the type of the value
- *                returned by the update function and
- *                of the value
- *                accepted by the function.
- *
- * @param updateFn - Update function. This function
- *                 references one or more accessors of
- *                 other subjects. It **should not**
- *                 perform side effects. It is expected
- *                 to return a value which will be the
- *                 value of the closure until the next
- *                 update. The closure's value is
- *                 supplied to this update function
- *                 on the next update.
- * @param value    - Initial value that is passed to
- *                 `updateFn` when it executes for the
- *                 first time.
- * @param equal    - By default the current and previous
- *                 values are not compared so updates
- *                 will be triggered even if the value
- *                 doesn't _change_. When `true` is
- *                 specified the
- *                 {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Strict_equality | strict equality operator}
- *                 is used to compare values and updates
- *                 with identical values **are**
- *                 suppressed. When `T` is a structural
- *                 type it is necessary to provide a
- *                 `(a: T, b: T) => boolean` comparison
- *                 predicate instead.
- * @param options  - Holder object for relevant options.
- *                 Assigning a `name` to a subject can
- *                 be useful during debugging.
- * @returns        - The accessor to the closure's
- *                 value (getter function). Retrieves
- *                 the closure's current value. Used by
- *                 observers (or more accurately their
- *                 update function) to obtain the
- *                 value (and to subscribe for
- *                 updates).
- */
-function createMemo<T>(
-  updateFn: UpdateFn<T>,
-  value?: T,
-  equal?: boolean | EqualFn<T>,
-  options?: Options
-): GetterFn<T> {
-  const memo: Memo<T> = {
+   @template T
+   @type { import('./reactivity').createMemo<T> }
+*/
+function createMemo(updateFn, value, equal, options) {
+  /** @type Memo<T> */
+  const memo = {
     name: options?.name,
-    observers: new Set<ObserverR>(),
+    observers: new Set(),
     value,
     equalFn: selectEqualFn(equal),
     updateFn,
     status: Status.Stale,
     pure: true,
-    subjects: new Set<SubjectR>(),
+    subjects: new Set(),
   };
   updateObserver(memo);
-  return (): T => readSubject(memo);
+  return () => readSubject(memo);
 }
 
 /**
- * Creates an effect closure with the supplied
- * function which is expected to perform side effects.
- *
- * @typeParam T    - Type of the closure's value.
- *                 By extension the type of the value
- *                 returned by the effect function
- *                 and of the value accepted by the
- *                 function.
- *
- * @param updateFn - Effect function. This function
- *                 references one or more accessors of
- *                 subjects. It may perform side effects.
- *                 It will also be passed the
- *                 value that it returned the last time it
- *                 was invoked.
- * @param value    - Initial value that is passed to
- *                 `updateFn` when it executes for
- *                  the first time.
- * @returns        - The `unsubscribe` function. Once
- *                 invoked the effect closure will
- *                 stop receiving updates from the
- *                 subjects it subscribed to.
- */
-function createEffect<T>(updateFn: UpdateFn<T>, value?: T): UnsubscribeFn {
-  const o: Observer<T> = {
+   @template T
+   @type { import('./reactivity').createEffect<T> }
+*/
+function createEffect(updateFn, value) {
+  /** @type Observer<T> */
+  const o = {
     value,
     updateFn,
     status: Status.Stale,
     pure: false,
-    subjects: new Set<SubjectR>(),
+    subjects: new Set(),
   };
 
   if (effectsQueue) effectsQueue.push(o);
@@ -429,7 +389,7 @@ export { createSignal, createMemo, createEffect };
 // `Subject<T>`, `createEffect<T>()` an `Observer<T>`, and
 // `createMemo<T>()` a `Memo<T>`.
 //
-// `createSignal<T>()` returns two functions in an
+// `createSignal<T>()` returns two functions in a
 // `SignalPair<T>` tuple, a `GetterFn<T>` accessor
 // and a `SetterFn<T>` mutator. The mutator triggers
 // the update of all the `Subject<T>`'s dependents
@@ -550,7 +510,7 @@ export { createSignal, createMemo, createEffect };
 //   dependencies has been updated. The `Observer<T>`
 //   instance is on `updateQueue`.
 //
-// `runUpdates` coordinates the current update wave.
+// `runUpdates` coordinates the current wave of updates.
 // The passed `prepareUpdate` function is invoked if an
 // update wave is already underway. Otherwise an empty
 // `updateQueue` is set up. If effects are already

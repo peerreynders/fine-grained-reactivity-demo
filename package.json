@@ -1,7 +1,7 @@
 {
   "name": "fine-grained-reactivity-demo",
-  "description": "TypeScript demo of fine-grained reactive programming.",
-  "version": "0.1.0",
+  "description": "Typed JavaScript demo of fine-grained reactive programming.",
+  "version": "0.2.0",
   "author": "Peer Reynders",
   "license": "MIT",
   "homepage": "https://github.com/peerreynders/fine-grained-reactivity-demo#readme",
@@ -11,22 +11,19 @@
   },
   "private": "true",
   "scripts": {
-    "lint:types": "tsc --noEmit -p .",
-    "lint:ci": "eslint . --ext .ts",
-    "lint": "npm run lint:types && npm run lint:ci",
-    "prettier": "prettier --write .",
-    "test": "npm run lint:types && ava --config ava.config.js"
+    "lint:types": "cd ./reactivity && npm run lint:types",
+    "lint:es": "eslint ./reactivity",
+    "lint": "npm run lint:types && npm run lint:es",
+    "format": "prettier --write .",
+    "test": "cd ./reactivity && npm run test"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.11.0",
-    "@typescript-eslint/parser": "^4.11.0",
-    "ava": "^3.14.0",
-    "eslint": "^7.16.0",
-    "eslint-config-prettier": "^7.1.0",
+    "ava": "^3.15.0",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-tsdoc": "^0.2.10",
+    "eslint-plugin-tsdoc": "^0.2.11",
     "prettier": "^2.2.1",
-    "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   }
 }

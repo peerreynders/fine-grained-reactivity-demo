@@ -1,5 +1,6 @@
+// @ts-nocheck
 import test from 'ava';
-import { createSignal, createMemo, createEffect } from './reactivity';
+import { createSignal, createMemo, createEffect } from './reactivity.js';
 
 test('A signal has a value', (t) => {
   const initialValue = 10;
@@ -60,7 +61,7 @@ test("An effect fires only when the memo's value changes", (t) => {
     undefined,
     true // i.e. equality check - don't propagate if value doesn't change
   );
-  let value: number | undefined;
+  let value;
   createEffect(() => (value = output()));
   value = undefined; // discard initial value from registration
   setInput(2);
@@ -73,7 +74,7 @@ test('An effect does not report a stale value', (t) => {
   const [input, setInput] = createSignal(1);
   const output = createMemo(() => input() + 1);
 
-  let value: number | undefined;
+  let value;
   createEffect(() => (value = output()));
 
   setInput(2);
@@ -109,7 +110,7 @@ test("An effect fires even if the value it evaluates to doesn't change", (t) => 
     undefined,
     true // i.e. equality check - don't propagate if value doesn't change
   );
-  const values: string[] = [];
+  const values = [];
   createEffect(() => {
     const _dontCare = output();
     values.push('cell changed');
@@ -127,10 +128,10 @@ test('Effects can be added and removed', (t) => {
   const [input, setInput] = createSignal(11);
   const output = createMemo(() => input() + 1);
 
-  const values1: number[] = [];
+  const values1 = [];
   const unsubscribe1 = createEffect(() => values1.push(output()));
   values1.pop(); // discard initial value from registration
-  const values2: number[] = [];
+  const values2 = [];
   createEffect(() => values2.push(output()));
   values2.pop(); // discard initial value ...
 
@@ -138,7 +139,7 @@ test('Effects can be added and removed', (t) => {
 
   unsubscribe1();
 
-  const values3: number[] = [];
+  const values3 = [];
   createEffect(() => values3.push(output()));
   values3.pop(); // discard initial value ...
 
@@ -153,10 +154,10 @@ test("Removing an effect multiple times doesn't interfere with other effects", (
   const [input, setInput] = createSignal(1);
   const output = createMemo(() => input() + 1);
 
-  const values1: number[] = [];
+  const values1 = [];
   const unsubscribe1 = createEffect(() => values1.push(output()));
   values1.pop(); // discard initial value from registration
-  const values2: number[] = [];
+  const values2 = [];
   createEffect(() => values2.push(output()));
   values2.pop(); // discard initial value ...
 
@@ -177,7 +178,7 @@ test('Effects should only be called once, even when multiple dependencies change
   const minusOne2 = createMemo(() => minusOne1() - 1);
   const output = createMemo(() => plusOne() * minusOne2());
 
-  const values: number[] = [];
+  const values = [];
   createEffect(() => values.push(output()));
   values.pop(); // discard initial value from registration
 
@@ -196,7 +197,7 @@ test("Effect on a stable source doesn't fire - even when that source's sources v
     true // i.e. equality check - don't propagate if value doesn't change
   );
 
-  const values: number[] = [];
+  const values = [];
   createEffect(() => values.push(alwaysTwo()));
   values.pop(); // discard initial value from registration
 

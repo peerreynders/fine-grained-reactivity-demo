@@ -1,0 +1,15 @@
+{
+  "name": "reactivity",
+  "description": "ESM demonstration of typed JavaScript code",
+  "version": "0.2.0",
+  "author": "Peer Reynders",
+  "license": "MIT",
+  "homepage": "https://github.com/peerreynders/fine-grained-reactivity-demo#readme",
+  "private": "true",
+  "type": "module",
+  "scripts": {
+    "lint:types": "../node_modules/.bin/tsc",
+    "test": "../node_modules/.bin/ava --config ava.config.js"
+  },
+  "keywords": []
+}
