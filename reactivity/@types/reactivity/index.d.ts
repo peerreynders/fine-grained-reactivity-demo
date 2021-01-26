@@ -1,4 +1,4 @@
-declare module 'react' {
+declare module 'reactivity' {
   type EqualFn<T> = import('./../../internal').EqualFn<T>;
   type GetterFn<T> = import('./../../internal').GetterFn<T>;
   type Options = import('./../../internal').Options;
@@ -127,3 +127,4 @@ declare module 'react' {
     value?: T
   ): UnsubscribeFn;
 }
+
