@@ -1,63 +1,40 @@
-type StatusEnum = {
+export type StatusEnum = {
   OK: 0;
   Pending: 1;
   Stale: 2;
 };
-type Status = StatusEnum[keyof StatusEnum];
+export type Status = StatusEnum[keyof StatusEnum];
 
-/**
-   Type for the closure's value equality predicate.
-
-   @typeParam T - Type of the values being compared for
-   equality.
-
-   @remarks
-   Conceptually this function should be equivalent
-   to: `lhs === rhs`
-
-   @param lhs   - left hand side value
-   @param rhs   - right hand side value
-   @returns     - `true` if values are considered
-   equal; `false` otherwise.
-*/
-type EqualFn<T> = (lhs: T, rhs: T) => boolean;
-type GetterFn<T> = () => T;
-type SetterFn<T> = (value: T) => T;
-type UnsubscribeFn = () => void;
-type UpdateFn<T> = (value?: T) => T;
-
-export type SignalPair<T> = [GetterFn<T>, SetterFn<T>];
-
-type Options = {
-  name: string;
-};
-
-type ObserverR = {
+export type ObserverR = {
   name?: string;
   pure: boolean;
   status: Status;
   subjects: Set<SubjectR>;
 };
 
+type UpdateFn<T> = import('reactivity').UpdateFn<T>;
+
 type ObserverV<T> = {
   value?: T;
   updateFn: UpdateFn<T>;
 };
 
-type Observer<T> = ObserverR & ObserverV<T>;
+export type Observer<T> = ObserverR & ObserverV<T>;
 
-type SubjectR = {
+export type SubjectR = {
   name?: string;
   observers: Set<ObserverR>;
 };
+
+type EqualFn<T> = import('reactivity').EqualFn<T>;
 
 type SubjectV<T> = {
   value?: T;
   equalFn?: EqualFn<T>;
 };
 
-type Subject<T> = SubjectR & SubjectV<T>;
+export type Subject<T> = SubjectR & SubjectV<T>;
 
-type MemoR = ObserverR & SubjectR;
+export type MemoR = ObserverR & SubjectR;
 
-type Memo<T> = MemoR & ObserverV<T> & SubjectV<T>;
+export type Memo<T> = MemoR & ObserverV<T> & SubjectV<T>;

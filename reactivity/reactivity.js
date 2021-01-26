@@ -8,9 +8,9 @@
 //
 /**
    @template T
-   @typedef { import('./internal').EqualFn<T>} EqualFn<T>
+   @typedef { import('reactivity').EqualFn<T>} EqualFn<T>
 */
-/** @typedef { import('./internal').UnsubscribeFn } UnsubscribeFn */
+/** @typedef { import('reactivity').UnsubscribeFn } UnsubscribeFn */
 
 /** @typedef { import('./internal').SubjectR } SubjectR */
 /** @typedef { import('./internal').ObserverR } ObserverR */

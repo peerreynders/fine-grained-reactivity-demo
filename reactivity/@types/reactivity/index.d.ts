@@ -1,10 +1,30 @@
 declare module 'reactivity' {
-  type EqualFn<T> = import('./../../internal').EqualFn<T>;
-  type GetterFn<T> = import('./../../internal').GetterFn<T>;
-  type Options = import('./../../internal').Options;
-  type SignalPair<T> = import('./../../internal').SignalPair<T>;
-  type UnsubscribeFn = import('./../../internal').UnsubscribeFn;
-  type UpdateFn<T> = import('./../../internal').UpdateFn<T>;
+  /**
+     Type for the closure's value equality predicate.
+
+     @typeParam T - Type of the values being compared for
+     equality.
+
+     @remarks
+     Conceptually this function should be equivalent
+     to: `lhs === rhs`
+
+     @param lhs   - left hand side value
+     @param rhs   - right hand side value
+     @returns     - `true` if values are considered
+     equal; `false` otherwise.
+  */
+  export type EqualFn<T> = (lhs: T, rhs: T) => boolean;
+  export type UnsubscribeFn = () => void;
+  export type UpdateFn<T> = (value?: T) => T;
+
+  export type GetterFn<T> = () => T;
+  export type SetterFn<T> = (value: T) => T;
+  export type SignalPair<T> = [GetterFn<T>, SetterFn<T>];
+
+  export type Options = {
+    name: string;
+  };
 
   /**
    * Creates a signal closure. The value is accessed
