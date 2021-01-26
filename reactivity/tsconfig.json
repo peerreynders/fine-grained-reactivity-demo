@@ -22,6 +22,7 @@
     // "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
     // "isolatedModules": true                /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */,
     // "noEmitOnError": true,                 /* Do not emit outputs when compilation fails. */
+    // "maxNodeModuleJsDepth": 0,             /* The maximum dependency depth to search under node_modules and load JavaScript files.*/
 
     /* Strict Type-Checking Options */
     "strict": true /* Enable all strict type-checking options. */,
@@ -61,5 +62,5 @@
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
   "compileOnSave": true,
-  "exclude": ["node_modules", "ava.config.js"]
+  "exclude": ["node_modules"]
 }

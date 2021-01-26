@@ -6,12 +6,6 @@
 // https://indepth.dev/posts/1269/finding-fine-grained-reactive-programming#how-it-works
 // https://levelup.gitconnected.com/finding-fine-grained-reactive-programming-89741994ddee?source=friends_link&sk=31c66a70c1dce7dd5f3f4229423ad127#4543
 //
-/**
-   @template T
-   @typedef { import('reactivity').EqualFn<T>} EqualFn<T>
-*/
-/** @typedef { import('reactivity').UnsubscribeFn } UnsubscribeFn */
-
 /** @typedef { import('./internal').SubjectR } SubjectR */
 /** @typedef { import('./internal').ObserverR } ObserverR */
 /** @typedef { import('./internal').MemoR } MemoR */
@@ -102,28 +96,6 @@ let effectsQueue;
 function link(subject, observer) {
   observer.subjects.add(subject);
   subject.observers.add(observer);
-}
-
-/**
-   @param { ObserverR } observer
-   @return void
-*/
-function unsubscribe(observer) {
-  observer.subjects.forEach((subject) => subject.observers.delete(observer));
-}
-
-/**
-   @param { ObserverR | undefined } observer
-   @return { UnsubscribeFn }
-*/
-function makeUnsubscribe(observer) {
-  return () => {
-    if (!observer) return;
-    const o = observer;
-    observer = undefined;
-
-    unsubscribe(o);
-  };
 }
 
 /**
@@ -294,9 +266,31 @@ function writeSubject(subject, value) {
   return subject.value;
 }
 
+/** @typedef { import('reactivity').Options } Options */
 /**
    @template T
-   @type { import('reactivity').createSignal<T> }
+   @typedef { import('reactivity').EqualFn<T> } EqualFn<T>
+*/
+/**
+   @template T
+   @typedef { import('reactivity').GetterFn<T> } GetterFn<T>
+*/
+/**
+   @template T
+   @typedef { import('reactivity').SignalPair<T> } SignalPair<T>
+*/
+/**
+   @template T
+   @typedef { import('reactivity').UpdateFn<T> } UpdateFn<T>
+*/
+
+/**
+   @template T
+   @param { T } value
+   @param { boolean | EqualFn<T> } [equal]
+   @param { Options } [options]
+   @returns { SignalPair<T> }
+   @type createSignal<T>
 */
 function createSignal(value, equal, options) {
   /** @type  Subject<T> */
@@ -312,7 +306,11 @@ function createSignal(value, equal, options) {
 
 /**
    @template T
-   @type { import('reactivity').createMemo<T> }
+   @param { import('reactivity').UpdateFn<T> } updateFn<T>
+   @param { T } [value]
+   @param { boolean | EqualFn<T> } [equal]
+   @param { Options } [options]
+   @returns { GetterFn<T> }
 */
 function createMemo(updateFn, value, equal, options) {
   /** @type Memo<T> */
@@ -330,9 +328,35 @@ function createMemo(updateFn, value, equal, options) {
   return () => readSubject(memo);
 }
 
+/** @typedef { import('reactivity').UnsubscribeFn } UnsubscribeFn */
+
+/**
+   @param { ObserverR } observer
+   @return void
+*/
+function unsubscribe(observer) {
+  observer.subjects.forEach((subject) => subject.observers.delete(observer));
+}
+
+/**
+   @param { ObserverR | undefined } observer
+   @return { UnsubscribeFn }
+*/
+function makeUnsubscribe(observer) {
+  return () => {
+    if (!observer) return;
+    const o = observer;
+    observer = undefined;
+
+    unsubscribe(o);
+  };
+}
+
 /**
    @template T
-   @type { import('reactivity').createEffect<T> }
+   @param { UpdateFn<T> } updateFn<T>
+   @param { T } [value]
+   @returns { UnsubscribeFn }
 */
 function createEffect(updateFn, value) {
   /** @type Observer<T> */
