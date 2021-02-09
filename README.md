@@ -2,11 +2,11 @@
 # Fine-Grained Reactivity Demo
 
 A typed ECMAScript<sup>[1](#originally-ts)</sup> demo of fine-grained reactive programming.
-* The Inspiration: [Finding Fine-Grained Reactive Programming](https://indepth.dev/posts/1269/finding-fine-grained-reactive-programming#how-it-works) (or on [gitconnected.com](https://levelup.gitconnected.com/finding-fine-grained-reactive-programming-89741994ddee?source=friends_link&sk=31c66a70c1dce7dd5f3f4229423ad127#4543)) - How It Works (... but what does that look like in detail?)
+* The Inspiration: [Finding Fine-Grained Reactive Programming](https://indepth.dev/posts/1269/finding-fine-grained-reactive-programming#how-it-works) (or on [gitconnected.com](https://levelup.gitconnected.com/finding-fine-grained-reactive-programming-89741994ddee?source=friends_link&sk=31c66a70c1dce7dd5f3f4229423ad127#4543)) - How It Works (... but what does that look like in detail?) - 2021-02-09: [A Hands-on Introduction to Fine-Grained Reactivity](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf).
 * The Opportunity: A pre-existing exercise-centric test specification - [Implement a basic reactive system](https://github.com/exercism/problem-specifications/blob/master/exercises/react/canonical-data.json) (... I wish this was phrased in terms of fine-grained reactive programming).
 * The Motivation: The [exercise](https://exercism.io/tracks/javascript/exercises/react) hasn't been implemented for the TypeScript track (... hmmm ...).
 * The Sources: [`solid/src/reactive/signal.ts`](https://github.com/ryansolid/solid/blob/master/packages/solid/src/reactive/signal.ts) and [Reactivity](https://github.com/ryansolid/solid/blob/master/documentation/reactivity.md#user-content-computations).
-* The Result: The [React Exercise](https://github.com/exercism/typescript/tree/master/exercises/react) on the [exercism.io TypeScript track](https://exercism.io/tracks/typescript/exercises/react) and this repository (the core is found in [`reactivity/reactivity.js`](reactivity/reactivity.js)).
+* The Result: The [React Exercise](https://github.com/exercism/typescript/tree/main/exercises/practice/react) on the [exercism.io TypeScript track](https://exercism.io/tracks/typescript/exercises/react) and this repository (the core is found in [`reactivity/reactivity.js`](reactivity/reactivity.js)).
 
 ```ShellSession
 $ cd fine-grained-reactivity-demo
