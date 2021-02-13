@@ -6,7 +6,7 @@ A typed ECMAScript<sup>[1](#originally-ts)</sup> demo of fine-grained reactive p
 * The Opportunity: A pre-existing exercise-centric test specification - [Implement a basic reactive system](https://github.com/exercism/problem-specifications/blob/master/exercises/react/canonical-data.json) (... I wish this was phrased in terms of fine-grained reactive programming).
 * The Motivation: The [exercise](https://exercism.io/tracks/javascript/exercises/react) hasn't been implemented for the TypeScript track (... hmmm ...).
 * The Sources: [`solid/src/reactive/signal.ts`](https://github.com/ryansolid/solid/blob/master/packages/solid/src/reactive/signal.ts) and [Reactivity](https://github.com/ryansolid/solid/blob/master/documentation/reactivity.md#user-content-computations).
-* The Result: The [React Exercise](https://github.com/exercism/typescript/tree/main/exercises/practice/react) on the [exercism.io TypeScript track](https://exercism.io/tracks/typescript/exercises/react) and this repository (the core is found in [`reactivity/reactivity.js`](reactivity/reactivity.js)).
+* The Result: The [React Exercise](https://github.com/exercism/typescript/tree/main/exercises/practice/react) ([PR](https://github.com/exercism/typescript/pull/373)) on the [exercism.io TypeScript track](https://exercism.io/tracks/typescript/exercises/react) and this repository (the core is found in [`reactivity/reactivity.js`](reactivity/reactivity.js)).
 
 ```ShellSession
 $ cd fine-grained-reactivity-demo
