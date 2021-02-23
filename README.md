@@ -43,4 +43,4 @@ $ npm run test
   15 tests passed
 $
 ```
-<a name="originally-ts">1</a>: Originally authored in TypeScript. After this [tweet](https://twitter.com/Rich_Harris/status/1350436286948122625) this repository was converted to typed ECMAScript.
+<a name="originally-ts">1</a>: Originally authored in TypeScript. After this [tweet](https://twitter.com/Rich_Harris/status/1350436286948122625) this repository was converted to typed ECMAScript. For a somewhat simplified version in TypeScript [see here](https://exercism.io/tracks/typescript/exercises/react/solutions/685e0fcaefe54ee8a92c35ca14058640). For a fundamental introduction please refer to [Building a Reactive Library from Scratch](https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p) (2021-02-18);  
